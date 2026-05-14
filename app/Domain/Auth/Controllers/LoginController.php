@@ -13,6 +13,10 @@ class LoginController
 
         $result = $action->execute($data);
 
+        if ($result === null) {
+            return response()->json(['message' => 'invalid credentials'], 401);
+        };
+
         return response()->json($result, 200);
     }
 }

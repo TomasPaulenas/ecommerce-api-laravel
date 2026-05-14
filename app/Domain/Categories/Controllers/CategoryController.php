@@ -21,7 +21,7 @@ class CategoryController extends Controller
     {
 
         $request->validate([
-            'name' => 'required|string|,max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string'
         ]);
 
@@ -50,10 +50,14 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
-        $category->update([
-            'name' => $request->name,
-            'description' => $request->description
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|nullable|string'
         ]);
+
+        $category->update($validated);
+
+
 
         return response()->json($category);
     }
