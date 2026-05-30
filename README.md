@@ -1,58 +1,278 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ShopFlow API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A RESTful e-commerce API built with Laravel. This project includes authentication, role-based authorization, product and category management, shopping cart functionality, order creation, stock management, and order status workflows.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Authentication
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* User registration
+* User login
+* Logout
+* Protected routes using Laravel Sanctum
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Roles & Authorization
 
-## Learning Laravel
+* User role
+* Admin role
+* Admin-only endpoints protected by middleware
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Categories
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+* List categories
+* View category details
+* Create category (admin)
+* Update category (admin)
+* Delete category (admin)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Products
 
-## Agentic Development
+* List active products
+* View product details
+* Create product (admin)
+* Update product (admin)
+* Soft deactivate products (admin)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Shopping Cart
+
+* Add products to cart
+* View cart
+* Update item quantity
+* Remove items from cart
+
+### Orders
+
+* Create order from cart
+* Automatic stock validation
+* Automatic stock deduction
+* View own orders
+* View specific order details
+
+### Order Management (Admin)
+
+* View all orders
+* View specific order
+* Update order status
+
+Supported order statuses:
+
+* pending
+* paid
+* shipped
+* cancelled
+* completed
+
+---
+
+## Tech Stack
+
+* PHP 8+
+* Laravel 12
+* Laravel Sanctum
+* SQLite (development)
+* MySQL compatible
+* REST API
+* Postman
+
+---
+
+## Installation
+
+Clone repository:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/TomasPaulenas/ecommerce-api-laravel.git
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Install dependencies:
 
-## Contributing
+```bash
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Create environment file:
 
-## Code of Conduct
+```bash
+cp .env.example .env
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Generate application key:
 
-## Security Vulnerabilities
+```bash
+php artisan key:generate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Run migrations:
 
-## License
+```bash
+php artisan migrate
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Start development server:
+
+```bash
+php artisan serve
+```
+
+---
+
+## Environment Variables
+
+Example:
+
+```env
+APP_NAME=ShopFlow
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+
+DB_CONNECTION=sqlite
+DB_DATABASE=database/database.sqlite
+```
+
+---
+
+## Main Endpoints
+
+### Authentication
+
+| Method | Endpoint      |
+| ------ | ------------- |
+| POST   | /api/register |
+| POST   | /api/login    |
+| POST   | /api/logout   |
+| GET    | /api/me       |
+
+### Categories
+
+| Method | Endpoint             |
+| ------ | -------------------- |
+| GET    | /api/categories      |
+| GET    | /api/categories/{id} |
+
+Admin:
+
+| Method | Endpoint             |
+| ------ | -------------------- |
+| POST   | /api/categories      |
+| POST   | /api/categories/{id} |
+| DELETE | /api/categories/{id} |
+
+### Products
+
+| Method | Endpoint           |
+| ------ | ------------------ |
+| GET    | /api/products      |
+| GET    | /api/products/{id} |
+
+Admin:
+
+| Method | Endpoint           |
+| ------ | ------------------ |
+| POST   | /api/products      |
+| POST   | /api/products/{id} |
+| DELETE | /api/products/{id} |
+
+### Cart
+
+| Method | Endpoint             |
+| ------ | -------------------- |
+| POST   | /api/cart/items      |
+| GET    | /api/cart            |
+| PATCH  | /api/cart/items/{id} |
+| DELETE | /api/cart/items/{id} |
+
+### Orders
+
+| Method | Endpoint         |
+| ------ | ---------------- |
+| POST   | /api/orders      |
+| GET    | /api/orders      |
+| GET    | /api/orders/{id} |
+
+Admin:
+
+| Method | Endpoint                      |
+| ------ | ----------------------------- |
+| GET    | /api/admin/orders             |
+| GET    | /api/admin/orders/{id}        |
+| PATCH  | /api/admin/orders/{id}/status |
+
+---
+
+## Project Architecture
+
+```text
+Domain/
+├── Auth/
+│   ├── Actions/
+│   ├── Controllers/
+│   └── Requests/
+├── Categories/
+│   └── Controllers/
+├── Products/
+│   └── Controllers/
+├── Cart/
+│   └── Controllers/
+└── Order/
+    └── Controllers/
+```
+
+### Controllers
+
+Handle HTTP requests and responses.
+
+### Actions
+
+Contain business logic related to authentication workflows.
+
+### Requests
+
+Handle request validation.
+
+### Models
+
+Represent database entities and relationships.
+
+### Middleware
+
+Used to protect admin-only routes.
+
+---
+
+## Testing With Postman
+
+1. Register a user.
+2. Login and obtain token.
+3. Add products to cart.
+4. Create an order.
+5. Login as admin.
+6. View all orders.
+7. Update order status.
+
+Use:
+
+```http
+Authorization: Bearer YOUR_TOKEN
+```
+
+for protected endpoints.
+
+---
+
+## Future Improvements
+
+* Automated testing
+* API Resources
+* Service layer
+* Docker support
+* Product images upload
+* Pagination
+* API documentation with Swagger/OpenAPI
+
+---
+
+## Author
+
+Tomas Paulenas
+Backend Developer (Laravel / PHP)
