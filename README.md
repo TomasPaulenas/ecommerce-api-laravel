@@ -1,66 +1,19 @@
 # ShopFlow API
 
-A RESTful e-commerce API built with Laravel. This project includes authentication, role-based authorization, product and category management, shopping cart functionality, order creation, stock management, and order status workflows.
+A RESTful e-commerce API built with Laravel. The project includes authentication, role-based authorization, category and product management, shopping cart functionality, order processing, stock validation, and order status workflows.
 
-## Features
+## Features Implemented
 
-### Authentication
-
-* User registration
-* User login
-* Logout
-* Protected routes using Laravel Sanctum
-
-### Roles & Authorization
-
-* User role
-* Admin role
-* Admin-only endpoints protected by middleware
-
-### Categories
-
-* List categories
-* View category details
-* Create category (admin)
-* Update category (admin)
-* Delete category (admin)
-
-### Products
-
-* List active products
-* View product details
-* Create product (admin)
-* Update product (admin)
-* Soft deactivate products (admin)
-
-### Shopping Cart
-
-* Add products to cart
-* View cart
-* Update item quantity
-* Remove items from cart
-
-### Orders
-
-* Create order from cart
-* Automatic stock validation
-* Automatic stock deduction
-* View own orders
-* View specific order details
-
-### Order Management (Admin)
-
-* View all orders
-* View specific order
-* Update order status
-
-Supported order statuses:
-
-* pending
-* paid
-* shipped
-* cancelled
-* completed
+* Authentication with Laravel Sanctum
+* Role-based authorization (User / Admin)
+* Category management
+* Product management
+* Shopping cart functionality
+* Order creation workflow
+* Stock validation and automatic stock deduction
+* Order status management
+* Soft deactivation of products
+* Protected routes with middleware
 
 ---
 
@@ -152,11 +105,11 @@ DB_DATABASE=database/database.sqlite
 
 Admin:
 
-| Method | Endpoint             |
-| ------ | -------------------- |
-| POST   | /api/categories      |
-| POST   | /api/categories/{id} |
-| DELETE | /api/categories/{id} |
+| Method    | Endpoint             |
+| --------- | -------------------- |
+| POST      | /api/categories      |
+| PUT/PATCH | /api/categories/{id} |
+| DELETE    | /api/categories/{id} |
 
 ### Products
 
@@ -167,11 +120,11 @@ Admin:
 
 Admin:
 
-| Method | Endpoint           |
-| ------ | ------------------ |
-| POST   | /api/products      |
-| POST   | /api/products/{id} |
-| DELETE | /api/products/{id} |
+| Method    | Endpoint           |
+| --------- | ------------------ |
+| POST      | /api/products      |
+| PUT/PATCH | /api/products/{id} |
+| DELETE    | /api/products/{id} |
 
 ### Cart
 
@@ -236,27 +189,40 @@ Represent database entities and relationships.
 
 ### Middleware
 
-Used to protect admin-only routes.
+Protect admin-only routes and authenticated endpoints.
 
 ---
 
 ## Testing With Postman
 
-1. Register a user.
-2. Login and obtain token.
-3. Add products to cart.
-4. Create an order.
-5. Login as admin.
-6. View all orders.
-7. Update order status.
+1. Register a user
+2. Login and obtain token
+3. Create categories and products as admin
+4. Add products to cart
+5. Create an order
+6. View order details
+7. Login as admin
+8. Update order status
 
-Use:
+Protected routes require:
 
 ```http
 Authorization: Bearer YOUR_TOKEN
 ```
 
-for protected endpoints.
+---
+
+## What I Learned
+
+* Laravel routing and middleware
+* Authentication with Laravel Sanctum
+* Eloquent relationships
+* Role-based authorization
+* Database migrations and schema design
+* REST API design principles
+* Shopping cart and order workflows
+* Stock management logic
+* Backend project structure and organization
 
 ---
 
@@ -266,13 +232,15 @@ for protected endpoints.
 * API Resources
 * Service layer
 * Docker support
-* Product images upload
+* Product image uploads
 * Pagination
-* API documentation with Swagger/OpenAPI
+* Swagger / OpenAPI documentation
+* Frontend application with React
 
 ---
 
 ## Author
 
-Tomas Paulenas
+**Tomas Paulenas**
+
 Backend Developer (Laravel / PHP)
