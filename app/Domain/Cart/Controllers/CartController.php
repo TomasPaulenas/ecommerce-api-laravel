@@ -5,44 +5,20 @@ namespace App\Domain\Cart\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Cart;
-use App\Models\Product;
-use App\Models\CartItem;
-
+use App\Domain\Cart\Actions\AddProductToCartAction;
+use App\Domain\Cart\Actions\RemoveCartItemAction;
+use App\Domain\Cart\Actions\UpdateCartItemAction;
 
 class CartController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request, AddProductToCartAction $action)
     {
-        $user = $request->user();
-
         $data = $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $cart = Cart::firstOrCreate([
-            'user_id' => $user->id,
-        ]);
-
-        $product = Product::findOrFail($data['product_id']);
-
-        $cartItem = CartItem::where('cart_id', $cart->id)
-            ->where('product_id', $product->id)
-            ->first();
-
-        if ($cartItem) {
-            $cartItem->quantity = $cartItem->quantity + $data['quantity'];
-            $cartItem->save();
-        } else {
-            $cartItem = CartItem::create([
-                'cart_id' => $cart->id,
-                'product_id' => $product->id,
-                'quantity' => $data['quantity'],
-                'unit_price' => $product->price,
-            ]);
-        }
-
-
+        $cartItem = $action->execute($request->user(), $data);
 
         return response()->json([
             'message' => 'Product added to cart',
@@ -52,9 +28,7 @@ class CartController extends Controller
 
     public function show(Request $request)
     {
-        $user = $request->user();
-
-        $cart = Cart::where('user_id', $user->id)
+        $cart = Cart::where('user_id', $request->user()->id)
             ->with('items.product')
             ->first();
 
@@ -74,69 +48,30 @@ class CartController extends Controller
             'total' => $total,
         ]);
     }
-    public function destroy(Request $request, $id)
+
+    public function destroy(Request $request, $id, RemoveCartItemAction $action)
     {
-        $user = $request->user();
-
-        $cart = Cart::where('user_id', $user->id)->first();
-
-        if (!$cart) {
-            return response()->json([
-                'message' => 'Cart not found',
-            ], 404);
-        }
-
-        $cartItem = CartItem::where('cart_id', $cart->id)
-            ->where('id', $id)
-            ->first();
-
-        if (!$cartItem) {
-            return response()->json([
-                'message' => 'Cart item not found',
-            ], 404);
-        }
-
-        $cartItem->delete();
+        $action->execute($request->user(), $id);
 
         return response()->json([
             'message' => 'Cart item deleted successfully',
         ]);
     }
 
-    public function patch(Request $request, $id)
+    public function patch(Request $request, $id, UpdateCartItemAction $action)
     {
-
-        $user = $request->user();
-
-        $cart = Cart::where('user_id', $user->id)->first();
-
-        if (!$cart) {
-            return response()->json([
-                'message' => 'Cart not found',
-            ], 404);
-        }
-
-        $cartItem = CartItem::where('cart_id', $cart->id)
-            ->where('id', $id)
-            ->first();
-
-        if (!$cartItem) {
-            return response()->json([
-                'message' => 'Cart item not found',
-            ], 404);
-        }
-
         $data = $request->validate([
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $cartItem->update([
-            'quantity' => $data['quantity'],
-        ]);
-        $cartItem->save();
+        $cartItem = $action->execute(
+            $request->user(),
+            $id,
+            $data['quantity']
+        );
 
         return response()->json([
-            'cart_item' => $cartItem
+            'cart_item' => $cartItem,
         ]);
     }
 }

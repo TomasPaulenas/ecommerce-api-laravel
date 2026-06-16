@@ -5,20 +5,22 @@ namespace App\Domain\Products\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Domain\Products\Actions\CreateProductAction;
+use App\Domain\Products\Actions\UpdateProductAction;
+use App\Domain\Products\Actions\DeactivateProductAction;
 
 class ProductController extends Controller
 {
     public function index()
     {
-
-        $products =  Product::with('category')->where('is_active', true)->get();
-
-
-
+        $products = Product::with('category')
+            ->where('is_active', true)
+            ->get();
 
         return response()->json($products);
     }
-    public function store(Request $request)
+
+    public function store(Request $request, CreateProductAction $action)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -30,8 +32,7 @@ class ProductController extends Controller
             'is_active' => 'boolean'
         ]);
 
-        $product = Product::create($data);
-        $product->load('category');
+        $product = $action->execute($data);
 
         return response()->json($product, 201);
     }
@@ -46,14 +47,8 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id, UpdateProductAction $action)
     {
-
-        $product = Product::where('id', $id)
-            ->where('is_active', true)
-            ->firstOrFail();
-
-
         $data = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|nullable|string',
@@ -64,20 +59,14 @@ class ProductController extends Controller
             'is_active' => 'sometimes|boolean'
         ]);
 
-        $product->update($data);
+        $product = $action->execute($id, $data);
 
-        $product->load('category');
         return response()->json($product);
     }
 
-    public function destroy(int $id)
+    public function destroy(int $id, DeactivateProductAction $action)
     {
-
-        $product = Product::where('id', $id)
-            ->where('is_active', true)
-            ->firstOrFail();
-
-        $product->update(['is_active' => false]);
+        $product = $action->execute($id);
 
         return response()->json([
             'message' => 'Product deactivated',
